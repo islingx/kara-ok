@@ -1,3 +1,5 @@
+@import '~antd/dist/antd.css';
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,7 +9,113 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.player {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.youtube-container {
+  width: 100%;
+  height: 100%;
+}
+
+.youtube {
+  width: 100%;
+  height: 100%;
+}
+
+.control {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+}
+
+.control .search {
+  flex-grow: 1;
+  padding: 24px;
+}
+
+.control .playlist-wrapper {
+  height: 100%;
+  width: 33%;
+}
+
+.control .playlist {
+  height: calc(100% - 88px);
+  padding: 12px 4px;
+}
+
+.control .playlist .playlist-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.control .panel {
+  height: 88px;
+  padding: 8px;
+  border-bottom: solid 1px #ededed;
+}
+
+.control .panel .panel-container {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.control .panel .panel-container button {
+  border: none;
+  border-radius: 100%;
+  width: 64px;
+  height: 64px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+}
+
+.control .panel .panel-container button:active {
+  filter: brightness(0.7);
+}
+
+.control .panel .panel-container button.background-none {
+  background: white;
+  width: 36px;
+  height: 36px;
+}
+
+.control .panel .panel-container button + button {
+  margin-left: 16px;
+}
+
+.song-card .container {
+  display: flex;
+  width: 100%;
+  padding: 0 12px;
+}
+
+.song-card.played {
+  color: #9e9e9e;
+}
+
+.song-card.active {
+  background-color: #d8f2ff;
+}
+
+.song-card .container img {
+  width: 36%;
+  height: auto;
+  object-fit: scale-down;
+}
+
+.song-card .container .info {
+  margin-left: 16px;
+}
+
+.song-card .container .title {
+  font-weight: 500;
+  font-size: 0.9rem;
 }
