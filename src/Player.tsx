@@ -92,28 +92,30 @@ const Player = () => {
       }
 
       dataChannel.addEventListener('open', () => {
-        const data = { type: 'msg', msg: 'CONNECTED' };
-        dataChannel.send(JSON.stringify(data));
+        dataChannel.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+
+          if (data.type === 'CMD') {
+            handleCmd(data.cmd);
+          } else if (data.type === 'DATA') {
+            if (data.curSong) {
+              console.log('change cur song:', data.curSong.title);
+
+              handleChangeCurSong(data.curSong);
+            }
+
+            if (data.nextSong) {
+              handleChangeNextSong(data.nextSong);
+            }
+          }
+        };
         setLoading(false);
 
         sendData.current = (d: Object) => dataChannel.send(JSON.stringify(d));
+
+        const data = { type: 'msg', msg: 'CONNECTED' };
+        dataChannel.send(JSON.stringify(data));
       });
-
-      dataChannel.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-
-        if (data.type === 'CMD') {
-          handleCmd(data.cmd);
-        } else if (data.type === 'DATA') {
-          if (data.curSong) {
-            handleChangeCurSong(data.curSong);
-          }
-
-          if (data.nextSong) {
-            handleChangeNextSong(data.nextSong);
-          }
-        }
-      };
     });
   }, [handleCmd]);
 

@@ -25,7 +25,7 @@ const Controller = () => {
   const [isPlay, setPlay] = useState(false);
   const [waiting, setWaiting] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const curSongId = useRef('');
+  const curSongId = useRef('NONE');
   const nextSongId = useRef('');
   const sendData = useRef<(data: Object) => void>();
   const nextAvailable = useRef(false);
@@ -110,6 +110,12 @@ const Controller = () => {
 
   useEffect(() => {
     createRoom().then((dataChannel) => {
+      dataChannel.onopen = () => {
+        sendData.current = (d: Object) => {
+          dataChannel.send(JSON.stringify(d));
+        };
+      };
+
       dataChannel.onmessage = (e) => {
         const data = JSON.parse(e.data);
 
@@ -119,10 +125,6 @@ const Controller = () => {
           notification.info({
             message: 'Player connected',
           });
-
-          sendData.current = (d: Object) => {
-            dataChannel.send(JSON.stringify(d));
-          };
         }
 
         if (data.type === 'msg' && data.msg === 'PAUSE') {
@@ -151,6 +153,10 @@ const Controller = () => {
       nextAvailable.current = false;
     }
 
+    if (waiting) {
+      return;
+    }
+
     if (playlist.length > currentIndex) {
       const curSong = playlist[currentIndex];
 
@@ -176,7 +182,7 @@ const Controller = () => {
       console.log('next', 'END');
       sendDataSafe({ type: 'DATA', nextSong: 'END' });
     }
-  }, [currentIndex, playlist]);
+  }, [currentIndex, playlist, waiting]);
 
   return (
     <div className='control'>
