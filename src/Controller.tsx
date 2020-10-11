@@ -160,8 +160,8 @@ const Controller = () => {
     if (playlist.length > currentIndex) {
       const curSong = playlist[currentIndex];
 
-      if (curSongId.current !== curSong.id) {
-        curSongId.current = curSong.id;
+      if (curSongId.current !== `${curSong.id}${currentIndex}`) {
+        curSongId.current = `${curSong.id}${currentIndex}`;
         console.log('play', curSong.title);
         sendDataSafe({ type: 'DATA', curSong: curSong });
       }
@@ -172,15 +172,17 @@ const Controller = () => {
     if (playlist.length > currentIndex + 1) {
       const nextSong = playlist[currentIndex + 1];
 
-      if (nextSongId.current !== nextSong.id) {
-        nextSongId.current = nextSong.id;
+      if (nextSongId.current !== `${nextSong.id}${currentIndex}`) {
+        nextSongId.current = `${nextSong.id}${currentIndex}`;
         console.log('next', nextSong.title);
         sendDataSafe({ type: 'DATA', nextSong: nextSong });
       }
     } else {
-      nextSongId.current = 'END';
-      console.log('next', 'END');
-      sendDataSafe({ type: 'DATA', nextSong: 'END' });
+      if (nextSongId.current !== 'END') {
+        nextSongId.current = 'END';
+        console.log('next', 'END');
+        sendDataSafe({ type: 'DATA', nextSong: 'END' });
+      }
     }
   }, [currentIndex, playlist, waiting]);
 
