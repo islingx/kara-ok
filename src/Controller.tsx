@@ -7,12 +7,14 @@ import {
   PauseOutlined,
   StepBackwardOutlined,
   StepForwardOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import axios from 'axios';
 
 import Song from './Song';
 import { createRoom } from './roomUsecase';
 import { Link } from 'react-router-dom';
+import SongCard from './components/SongCard';
 
 const KEY = 'AIzaSyCxMLRCWK7yQW2eH6E9xYZdFl-M4rylTAY';
 const getSearchByIDURI = (id: string) =>
@@ -25,10 +27,13 @@ const Controller = () => {
   const [isPlay, setPlay] = useState(false);
   const [waiting, setWaiting] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [searchResult, setSearchResult] = useState<Song[]>([]);
   const curSongId = useRef('NONE');
   const nextSongId = useRef('');
   const sendData = useRef<(data: Object) => void>();
   const nextAvailable = useRef(false);
+
+  const addToTheEnd = (song: Song) => setPlaylist((value) => [...value, song]);
 
   const handleSearchByID = async (value: string) => {
     const res = await axios.get(getSearchByIDURI(value));
@@ -43,7 +48,7 @@ const Controller = () => {
 
       const song = new Song(title, id, thumb);
 
-      setPlaylist((value) => [...value, song]);
+      addToTheEnd(song);
     }
   };
 
@@ -51,7 +56,24 @@ const Controller = () => {
     const res = await axios.get(getSearchURI(value));
 
     console.log(res.data.items);
+    const songs = res.data.items
+      .filter((s: any) => s.id.kind === 'youtube#video')
+      .map((s: any) => {
+        const title = s.snippet.title;
+        const id = s.id.videoId;
+        const thumb = s.snippet.thumbnails.default.url;
+        const channel = s.snippet.channelTitle;
+
+        const song = new Song(title, id, thumb);
+        song.channel = channel;
+
+        return song;
+      });
+
+    setSearchResult(songs);
   };
+
+  const handleChooseSearchResult = (song: Song) => () => addToTheEnd(song);
 
   const sendDataSafe = (d: Object) => {
     if (sendData.current) {
@@ -215,6 +237,30 @@ const Controller = () => {
           enterButton='Search'
           onSearch={handleSearch}
         />
+        {searchResult.length > 0 && (
+          <div className='search-result-wrapper'>
+            <List
+              className='search-result'
+              dataSource={searchResult}
+              renderItem={(song) => (
+                <List.Item
+                  actions={[
+                    <Button
+                      icon={<PlusOutlined />}
+                      onClick={handleChooseSearchResult(song)}
+                    />,
+                  ]}
+                >
+                  <SongCard
+                    title={song.title}
+                    thumb={song.thumb}
+                    channel={song.channel}
+                  />
+                </List.Item>
+              )}
+            />
+          </div>
+        )}
       </div>
       <Divider type='vertical' style={{ height: '100%' }} />
       <div className='playlist-wrapper'>

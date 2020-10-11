@@ -2,6 +2,7 @@ class Song {
   title: string;
   id: string;
   thumb: string;
+  channel?: string;
 
   constructor(title: string, id: string, thumb: string) {
     this.title = title;

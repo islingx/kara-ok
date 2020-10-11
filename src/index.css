@@ -119,3 +119,19 @@ body {
   font-weight: 500;
   font-size: 0.9rem;
 }
+
+.search-result-wrapper {
+  height: calc(100vh - 300px);
+}
+
+.search-result {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.song-card.big .container img {
+  height: 64px;
+  width: auto;
+  object-fit: scale-down;
+  margin-right: 16px;
+}
